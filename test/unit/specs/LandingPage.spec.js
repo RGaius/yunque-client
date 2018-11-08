@@ -1,13 +1,17 @@
 import Vue from 'vue'
-import LandingPage from '@/components/LandingPage'
+import Login from '@/components/page/Login'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
+Vue.use(iView)
 
-describe('LandingPage.vue', () => {
+
+describe('Login.vue', () => {
   it('should render correct contents', () => {
     const vm = new Vue({
       el: document.createElement('div'),
-      render: h => h(LandingPage)
+      render: h => h(Login)
     }).$mount()
 
-    expect(vm.$el.querySelector('.title').textContent).to.contain('Welcome to your new project!')
+    // expect(vm.$el.querySelector('.layout').textContent).to.contain('Welcome to your new project!')
   })
 })
