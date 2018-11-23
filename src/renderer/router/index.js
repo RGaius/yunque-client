@@ -9,11 +9,16 @@ export default new Router({
     {
       path: '/',
       name: 'login',
-      component: require('@/components/page/Login').default
+      component: require('@/view/Login').default
     },
     {
       path: '*',
       redirect: '/'
+    },
+    {
+      path: '/index',
+      name: 'index',
+      component: require('@/view/Index').default
     }
   ]
 })
