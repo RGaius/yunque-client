@@ -1,7 +1,7 @@
 <template>
     <div class="layout">
         <Row type="flex">
-            <Col span="" class="layout-menu-left">
+            <Col :span="menuSpace.left" class="layout-menu-left">
                 <Button type="text" class="navicon_btn" @click="toggleMenu">
                     <Icon type="ios-contact" size="20"></Icon>
                     <span>语雀客户端</span>
@@ -20,6 +20,9 @@
                     </Menu-group>
                 </Menu>
             </Col>
+            <Col :span="menuSpace.right">
+                <router-view :bucketName="bucketName"></router-view>
+            </Col>
         </Row>
     </div>
 </template>
@@ -29,6 +32,7 @@ export default {
         return {
             repository:[],
             menuState:true,
+            bucketName: '',
             loading:{
                 show:true
             }
@@ -38,7 +42,17 @@ export default {
         toggleMenu() {
             this.$router.push('/')
         },
-        onMenuSelect() {}
+        onMenuSelect() {
+            this.$router.push('/docs')
+        }
+    },
+    computed: {
+        menuSpace() {
+            return {
+                left: this.menuState ? 5 : 2,
+                right: this.menuState ? 19 : 22
+            };
+        }
     },
     created () {
         const _this = this
@@ -87,6 +101,9 @@ export default {
             .buckets-menu {
                 overflow-y: scroll;
                 max-height: 400px;
+            }
+            .buckets-menu::-webkit-scrollbar {
+                display: none
             }
             .ivu-menu-vertical {
                 flex-grow: 1;
