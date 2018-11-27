@@ -8,7 +8,7 @@
                 </Button>
                 <Menu ref='menu' width="auto" v-if="repository && repository.length > 0" @on-select="onMenuSelect">
                     <Menu-group class="buckets-menu" title="知识库">
-                        <Menu-item v-for="(item,index) of repository" :key="index" :name="item">
+                        <Menu-item v-for="(item,index) of repository" :key="index" :name="item.id">
                             <template v-if="menuState">
                                 <Icon type="md-folder" size="25" />
                                 <span class="layout-text">{{item.name}}</span>
@@ -21,7 +21,7 @@
                 </Menu>
             </Col>
             <Col :span="menuSpace.right">
-                <router-view :bucketName="bucketName"></router-view>
+                <router-view :bucketName="bucketName" :key="key"></router-view>
             </Col>
         </Row>
     </div>
@@ -42,8 +42,8 @@ export default {
         toggleMenu() {
             this.$router.push('/')
         },
-        onMenuSelect() {
-            this.$router.push('/docs')
+        onMenuSelect(name) {
+            this.$router.push({path:'/docs',query: {reposId: name}})
         }
     },
     computed: {
@@ -52,11 +52,14 @@ export default {
                 left: this.menuState ? 5 : 2,
                 right: this.menuState ? 19 : 22
             };
+        },
+        key(){
+            return this.$route.name !== undefined ? this.$route.name +new Date(): this.$route +new Date()
         }
     },
     created () {
         const _this = this
-        this.$http.get('repos',{
+        this.$http.get('users/Gaius/repos',{
             headers:{
                 'User-Agent':'ZZ9YSINhlpOHYhwEhRNnNodSQeqGpOlIxgMH6dWW'
             }
@@ -64,6 +67,10 @@ export default {
             let resData = res.data
             _this.repository.push(...resData.data)
         })
+    },watch:{
+        '$route'(to, from) {
+            console.info(to)
+        }
     }
 }
 </script>

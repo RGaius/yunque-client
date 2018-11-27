@@ -10,7 +10,7 @@ import 'iview/dist/styles/iview.css'
 Vue.use(iView)
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
-axios.defaults.baseURL = 'https://www.yuque.com/api/v2/users/Gaius/'
+axios.defaults.baseURL = 'https://www.yuque.com/api/v2/'
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
