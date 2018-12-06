@@ -13,12 +13,12 @@ export default class YuQueStorage{
      * @param {string} param
      * @param {function} callback
      */
-    saveYuqueInfo(param, callback){
+    async saveYuqueInfo(param, callback){
         let params = {
             token : param.token,
-            name : param.authName
+            name : param.authParam
         }
-        await this.setYuqueStorage(Constant.yuque.infoKey, sparams)
+        await this.setYuqueStorage(Constant.yuque.infoKey, params)
         callback && callback()
     }
 
