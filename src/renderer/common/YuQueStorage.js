@@ -1,5 +1,4 @@
 const storage = require('electron-json-storage');
-import Constant from '../common/constant'
 
 export default class YuQueStorage{
     /**
@@ -13,12 +12,8 @@ export default class YuQueStorage{
      * @param {string} param
      * @param {function} callback
      */
-    async saveYuqueInfo(param, callback){
-        let params = {
-            token : param.token,
-            name : param.authParam
-        }
-        await this.setYuqueStorage(Constant.yuque.infoKey, params)
+    async saveYuqueInfo(key, param, callback){
+        await this.setYuqueStorage(key, param)
         callback && callback()
     }
 
@@ -29,10 +24,19 @@ export default class YuQueStorage{
      */
     setYuqueStorage(key, value) {
         return new Promise(function (resolve, reject) {
-            storage.set(key, value, function(error){
-                if (error) return reject(error);
+            try {
+                localStorage.setItem(key,value)
                 resolve();
-            })
+            } catch (error) {
+                return reject(error)
+            }
         })
+    }
+    /**
+     * 
+     * @param {string} key 
+     */
+    getYuqueStorage(key) {
+        return localStorage.getItem(key)
     }   
 }

@@ -27,10 +27,16 @@
     </div>
 </template>
 <script>
+import * as util from "@/common/utils";
+import Constant from '@/common/constant'
+import DB from'@/common/db'
+
 export default {
     data() {
         return {
+            name:'',
             repository:[],
+            reposLength:0,
             menuState:true,
             bucketName: '',
             loading:{
@@ -59,18 +65,30 @@ export default {
     },
     created () {
         const _this = this
-        this.$http.get('users/Gaius/repos',{
-            headers:{
-                'User-Agent':'ZZ9YSINhlpOHYhwEhRNnNodSQeqGpOlIxgMH6dWW'
+        const userInfo = JSON.parse(_this.$storage.getYuqueStorage(Constant.yuque.infoKey))
+        _this.name = userInfo.name
+        const db = new DB(_this.name);
+        db.findDocument('repos', {},function(err,doc){
+            console.info(_this)
+            if (err === null && doc.length > 0){
+                 _this.repository.push(...doc)
+                 _this.reposLength = doc.length
             }
-        }).then(function (res){
-            let resData = res.data
-            _this.repository.push(...resData.data)
         })
-    },watch:{
-        '$route'(to, from) {
-            console.info(to)
+        console.info(_this.reposLength)
+        if (_this.reposLength === 0){
+            const reposUrl = util.getReposUrl(userInfo.name);
+            this.$http.get(reposUrl,{
+                headers:{
+                    'User-Agent': userInfo.token
+                }
+            }).then(function (res){
+                let reposList = res.data
+                _this.repository.push(...reposList.data)
+                db.insertDocument('repos', reposList.data)
+            })
         }
+        
     }
 }
 </script>
