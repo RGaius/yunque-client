@@ -31,6 +31,10 @@
 </template>
 <script>
 import yaml from 'js-yaml'
+import * as util from "@/common/utils";
+import Constant from '@/common/constant'
+import DB from'@/common/db'
+
 export default {
     data () {
         return {
@@ -44,19 +48,45 @@ export default {
     },
     created () {
         let reposId = this.$route.query.reposId
-        const _this = this
-        this.$http.get('repos/' + reposId,{
-            headers:{
-                'User-Agent':'ZZ9YSINhlpOHYhwEhRNnNodSQeqGpOlIxgMH6dWW'
-            }
-        }).then(function (res){
-            let resData = res.data.data
-            _this.repos.name = resData.name
-            _this.repos.description = resData.description
-            yaml.safeLoadAll(resData.toc_yml, function (doc) {
-                _this.repos.docList.push(...doc)
+        const _this = this     
+        let resData = {}
+        const docsUrl = util.getDocListUrl(reposId);
+        const userInfo = JSON.parse(this.$storage.getYuqueStorage(Constant.yuque.infoKey))
+        const db = new DB(userInfo.name);
+        db.findDocument('title_list', {id:reposId}).then(function (doc) {
+            if (doc.length > 0) {
+                resData = doc[0]
+                _this.handleRepoInfo(_this,resData)  
+            } else {
+                _this.$http.get(docsUrl,{
+                    headers:{
+                        'User-Agent': userInfo.token
+                    }
+                }).then(function (res){
+                    resData = res.data.data
+                    db.insertDocument('title_list', resData)
+                    _this.handleRepoInfo(_this,resData)  
+                })
+            }  
+        },function(err){
+            this.$Notice.error({
+              title: err
             });
         })
+    },
+    methods:{
+        /**
+         * 处理仓库信息
+         */
+        handleRepoInfo(_this,reposData){
+            if (reposData != null) {
+                _this.repos.name = reposData.name
+                _this.repos.description = reposData.description
+                yaml.safeLoadAll(reposData.toc_yml, function (doc) {
+                    _this.repos.docList.push(...doc)
+                }); 
+            }
+        }
     }
 }
 </script>

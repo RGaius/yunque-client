@@ -27,7 +27,7 @@ export function getReposUrl(name) {
  */
 export function getDocListUrl(reposId) {
     let reposUrl = '';
-    if (reposId != null && reposId.length > 0) {
+    if (reposId != null) {
         reposUrl = 'repos/' + reposId
     }
     return reposUrl;

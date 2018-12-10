@@ -1,4 +1,4 @@
-const storage = require('electron-json-storage');
+const store = require('store');
 
 export default class YuQueStorage{
     /**
@@ -25,7 +25,7 @@ export default class YuQueStorage{
     setYuqueStorage(key, value) {
         return new Promise(function (resolve, reject) {
             try {
-                localStorage.setItem(key,value)
+                store.set(key,value)
                 resolve();
             } catch (error) {
                 return reject(error)
@@ -37,6 +37,6 @@ export default class YuQueStorage{
      * @param {string} key 
      */
     getYuqueStorage(key) {
-        return localStorage.getItem(key)
+        return store.get(key)
     }   
 }

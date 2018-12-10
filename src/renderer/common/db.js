@@ -35,9 +35,17 @@ export default class Db {
      * @param {string} table 
      * @param {object} params 
      */
-    findDocument(table,params,callback){
-        let docList = []
-        const db = this.getDatastore(table)
-        db.find(params,callback)
+    findDocument(table,params){
+        const _this = this
+        return new Promise(function(resolve,reject){
+            const db = _this.getDatastore(table)
+            db.find(params,function(err,doc) {
+                if(err !== null) {
+                    reject(err)
+                } else{
+                    resolve(doc)
+                }
+            })
+        })
     }
 }

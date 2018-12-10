@@ -5,6 +5,7 @@
                 <Button type="text" class="navicon_btn" @click="toggleMenu">
                     <Icon type="ios-contact" size="20"></Icon>
                     <span>语雀客户端</span>
+                    <!-- <Icon type="ios-sync" size="20"/> -->
                 </Button>
                 <Menu ref='menu' width="auto" v-if="repository && repository.length > 0" @on-select="onMenuSelect">
                     <Menu-group class="buckets-menu" title="知识库">
@@ -36,7 +37,6 @@ export default {
         return {
             name:'',
             repository:[],
-            reposLength:0,
             menuState:true,
             bucketName: '',
             loading:{
@@ -68,26 +68,23 @@ export default {
         const userInfo = JSON.parse(_this.$storage.getYuqueStorage(Constant.yuque.infoKey))
         _this.name = userInfo.name
         const db = new DB(_this.name);
-        db.findDocument('repos', {},function(err,doc){
-            console.info(_this)
-            if (err === null && doc.length > 0){
-                 _this.repository.push(...doc)
-                 _this.reposLength = doc.length
-            }
+        let docList = [];
+        db.findDocument('repos', {}).then(function (doc) {
+            if (doc.length > 0) {
+                _this.repository.push(...doc)
+            } else {
+                const reposUrl = util.getReposUrl(userInfo.name);
+                _this.$http.get(reposUrl,{
+                    headers:{
+                        'User-Agent': userInfo.token
+                    }
+                }).then(function (res){
+                    let reposList = res.data
+                    _this.repository.push(...reposList.data)
+                    db.insertDocument('repos', reposList.data)
+                })
+            }  
         })
-        console.info(_this.reposLength)
-        if (_this.reposLength === 0){
-            const reposUrl = util.getReposUrl(userInfo.name);
-            this.$http.get(reposUrl,{
-                headers:{
-                    'User-Agent': userInfo.token
-                }
-            }).then(function (res){
-                let reposList = res.data
-                _this.repository.push(...reposList.data)
-                db.insertDocument('repos', reposList.data)
-            })
-        }
         
     }
 }

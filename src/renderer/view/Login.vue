@@ -19,7 +19,7 @@
         <Input type="text" v-model="yuque.name" placeholder="输入你的用户名"></Input>
       </FormItem>
       <FormItem>
-        <Button type="success" @click="handleSubmit('formCustom')">保存</Button>
+        <Button type="success" @click="handleSubmit('formCustom')">授权</Button>
         <Button type="primary" style="margin-left: 8px" @click="reset">重置</Button>
       </FormItem>
     </Form>
@@ -87,7 +87,7 @@ export default {
               _this.$storage.saveYuqueInfo(Constant.yuque.infoKey, JSON.stringify(_this.yuque), _this.toIndex())
               _this.$Notice.success({
                 title: "认证成功"
-            });
+              });
           } else {
             _this.$Notice.error({
               title: "认证失败"
